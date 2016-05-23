@@ -2,9 +2,11 @@ package filesystem;
 import java.io.BufferedWriter;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 
 import javax.xml.parsers.SAXParser;
@@ -198,6 +200,14 @@ public class WikiFileSplitter extends DefaultHandler2{
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser parser = factory.newSAXParser();
+			/*InputStream inputStream = null;
+			if(wikifile.endsWith(".xml")){
+				inputStream = new FileInputStream(wikifile);
+			}
+			else if(wikifile.endsWith(".bz2")){
+				
+			}*/
+			
 			parser.parse(wikifile, new WikiFileSplitter(outputDirectory));
 		} catch (Exception e) {
 			e.printStackTrace();
