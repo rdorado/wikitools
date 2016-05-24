@@ -214,7 +214,7 @@ public class WikiFileSplitter extends DefaultHandler2{
 		}
 	}
 
-	public static void main(String[] args) throws Exception{
+/*	public static void main(String[] args) throws Exception{
 		System.out.println("Activity started...");
 		long start = System.currentTimeMillis();
 		
@@ -224,5 +224,5 @@ public class WikiFileSplitter extends DefaultHandler2{
 		
 		System.out.println("Time spent: "+TimeFormatter.toMSM(System.currentTimeMillis()-start));
 	}
-
+*/
 }

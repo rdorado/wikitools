@@ -19,7 +19,9 @@ public class Main {
 			WikiFileSplitter.execute(wikifile, outputdir);
 		}
 		else if(args[0].equals("clean")){
-			ParserRunner.execute("/home/rdorado/Downloads/wikipedia/output/", "/home/rdorado/Downloads/wikipedia/text/", WikiTextTransformer.class, true);
+			String wikifile = args[1];			
+			String outputdir = args[2];
+			ParserRunner.execute(wikifile, outputdir, WikiTextTransformer.class, true);
 		}
 		else{
 			printUsage();
