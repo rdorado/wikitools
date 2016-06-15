@@ -15,13 +15,24 @@ public class WikiTextTransformer extends WikiBaseParser{
 	boolean readText=false;
 	boolean readTitle=false;
 	
+	boolean leaverel=false;
 	String title="";
 	String text="";
+	String[] options;
 	/*WordModel model = new WordModel();
 	PhraseModel phraseModel = new PhraseModel();
 	*/
-	public WikiTextTransformer(String outfilename) {
+	public WikiTextTransformer(String outfilename, String... options) {
 		super(outfilename);
+		 this.options=options;
+		 if(options!=null && options.length>0){
+			 for(String opt : options){
+				 if(opt.equals("-r")){
+					 leaverel=true;
+				 }
+			 }
+		 }
+		 
 	}
 	
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -83,15 +94,18 @@ public class WikiTextTransformer extends WikiBaseParser{
 				text=text.replaceAll("''", "");
 				text=text.replaceAll("&", "&amp;");
 				text=text.replaceAll("\\*", " ");
-				
+				text=text.replaceAll("<blockquote>", "");
+				text=text.replaceAll("</blockquote>", "");
 				/**
 				 * Relations info
 				 */
-				/*text=text.replaceAll("\\[\\[", "");
-				text=text.replaceAll("\\]\\]", "");
-				text=text.replaceAll("====", "");
-				text=text.replaceAll("===", "");
-				text=text.replaceAll("==", "");*/
+				if(!leaverel){
+					text=TextHelper.removeAllWikiInfo(text,"[[","]]","|");
+
+					text=text.replaceAll("====", "");
+					text=text.replaceAll("===", "");
+					text=text.replaceAll("==", "");
+				}
 				
 				
 			//	text=text.replaceAll(" http://(\\w*.)+ ", " ");

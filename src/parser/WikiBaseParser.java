@@ -26,7 +26,7 @@ public class WikiBaseParser extends DefaultHandler2{
 	String title="";
 	String text="";
 
-	public WikiBaseParser(String outfilename) {
+	public WikiBaseParser(String outfilename, String... options) {
 		try {
 			output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outfilename)));
 		} 

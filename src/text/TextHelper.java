@@ -17,6 +17,34 @@ public class TextHelper {
 		}
 		return text;
 	}
+	
+	public static String removeAllWikiInfo(String text, String startSymbol, String endSymbol, String separator) {
+		String strtmp = text;
+		while( (strtmp=TextHelper.removeWikiInfo(text,startSymbol,endSymbol,separator))!=null ){
+			text=strtmp;
+		}
+		return text;
+	}
+	
+	public static String removeWikiInfo(String text, String startSymbol, String endSymbol, String separator) {
+		int stIndx=-1;
+		int endIndx=0;
+		do{
+			endIndx = text.indexOf(endSymbol, endIndx+endSymbol.length());
+			if(endIndx==-1) return null;
+			
+			stIndx = text.substring(0, endIndx).lastIndexOf(startSymbol);
+			
+		}while(stIndx==-1);
+		
+		
+		String tmp = text.substring(stIndx+startSymbol.length(), endIndx);
+		if(tmp.contains(separator)) tmp = tmp.substring(tmp.indexOf(separator)+separator.length());
+
+		//System.out.println("'"+tmp+"'");
+		return text.substring(0,stIndx)+tmp+text.substring(endIndx+endSymbol.length());
+	}
+
 	public static String removeNonAlphabetical(String text){
 		text=text.replaceAll("\\[", " ");
 		text=text.replaceAll("\\]", " ");
@@ -103,6 +131,8 @@ public class TextHelper {
 		
 	}
 
+
+	
 
 }
 

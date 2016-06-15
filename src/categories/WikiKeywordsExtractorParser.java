@@ -1,5 +1,6 @@
 package categories;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -24,7 +25,7 @@ public class WikiKeywordsExtractorParser extends WikiBaseParser{
 	String text="";
 	StringBuffer buffer = new StringBuffer();
 
-	public WikiKeywordsExtractorParser(String outfilename) {
+	public WikiKeywordsExtractorParser(String outfilename, String...options) {
 		super(outfilename);
 		notValidCategories.add("Véase también");
 		notValidCategories.add("Enlaces externos");
@@ -137,92 +138,30 @@ public class WikiKeywordsExtractorParser extends WikiBaseParser{
 				
 				String text = new String(ch, start, length).trim();
 				String[] lines = text.split("\n");
-				
-				boolean skipSeccion=false;
-				for (String line : lines) {
-					if(line.startsWith("==") && line.endsWith("==")){
-
-						
-						if(!skipSeccion){
-							
-							String seccion = buffer.toString();
-							ArrayList<String> arrayList = RelationExtractor.getAsArray(seccion);
-							for (String str : arrayList) {
-							//	System.out.println("[["+str+"]]");
-								output.write("[["+str+"]]");
-								output.newLine();
-							}
-							
-							seccion=TextHelper.removeNonAlphabetical(seccion);
-							seccion=seccion.toLowerCase();
-							WordCounter wc = WordCounter.fromString(seccion);
-							ArrayList<String> wordcounts = wc.getWords();
-							for (String wordcnt : wordcounts) {
-						//		System.out.println(wordcnt);
-								output.write(wordcnt);
-								output.newLine();
-							}
-							
-						}
-						
-
-						if(!notValidCategories.contains(line.replaceAll("=", "").trim())){
-							
-							
-							/*System.out.println();
-							System.out.println(line);	*/
-							
-							output.newLine();
-							output.write(line);
-							output.newLine();
-							skipSeccion=false;
-						}
-						else skipSeccion=true;
-						
-						buffer=new StringBuffer();
-					}
-					else{
-						if(!skipSeccion) buffer.append(line+" ");
-					}
-		
-				}
-				
-				
-				
-				/**/
-				if(buffer.length()>0){
-					String seccion = buffer.toString();
-					ArrayList<String> arrayList = RelationExtractor.getAsArray(seccion);
-					if(!skipSeccion){
-						for (String str : arrayList) {
-							//System.out.println("[["+str+"]]");
-							output.write("[["+str+"]]");
+				for(String line: lines){
+					RelationExtractor extractor = new RelationExtractor(line);					
+					ArrayList<Entity> entities = new ArrayList<Entity>();
+					
+					if(line.contains("====")) entities.add( extractor.extractTitle("====","t3") );
+					else if(line.contains("===")) entities.add( extractor.extractTitle("===","t2") );
+					else if(line.contains("==")) entities.add( extractor.extractTitle("==","t1") );
+					
+					if(line.contains("[[")) entities.addAll( extractor.extract("[[","]]","rel") );
+					
+					Collections.sort(entities);
+					
+					if(entities.size()>0){
+						for (Entity entity : entities) {
+							output.write(entity.type+"="+entity.text);
 							output.newLine();
 						}
-						
-						seccion=TextHelper.removeNonAlphabetical(seccion);
-						seccion=seccion.toLowerCase();
-						WordCounter wc = WordCounter.fromString(seccion);
-						ArrayList<String> wordcounts = wc.getWords();
-						for (String wordcnt : wordcounts) {
-					//		System.out.println(wordcnt);
-							output.write(wordcnt);
-							output.newLine();
-						}
-						
 					}
 				}
 			}
-			
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		/*if(readText){
-			String text = new String(ch, start, length);
-			//model.addwordsAsText(text, phraseModel);
-		}*/
-		
 		
 	}
 	

@@ -13,11 +13,11 @@ import parser.WikiBaseParser;
 
 public class ParserRunner {
 
-	public static void execute(String inputDirectory, String outputDirectoy, Class<? extends WikiBaseParser> handlerClass) {
+	public static void execute(String inputDirectory, String outputDirectoy, Class<? extends WikiBaseParser> handlerClass, String... options) {
 		execute(inputDirectory, outputDirectoy, handlerClass, false);
 	}
 	
-	public static void execute(String inputDirectory, String outputDirectoy, Class<? extends WikiBaseParser> handlerClass, boolean debug) {
+	public static void execute(String inputDirectory, String outputDirectoy, Class<? extends WikiBaseParser> handlerClass, boolean debug, String... options) {
 		SAXParser parser=null;
 		int narticle=0;
 		long startTime = System.currentTimeMillis();
@@ -44,7 +44,7 @@ public class ParserRunner {
 						narticle++;
 						try {
 							
-							WikiBaseParser objParser = handlerClass.getConstructor(String.class).newInstance(outputDirectoy+"/"+dirTmp+"/"+file.getName());
+							WikiBaseParser objParser = handlerClass.getConstructor(String.class, String[].class).newInstance(outputDirectoy+"/"+dirTmp+"/"+file.getName(), options);
 							parser.parse(file, objParser);
 							
 							if(debug && narticle%1000==0) System.out.println(narticle+" articles parsed, elapsed time: "+TimeFormatter.toMSM(System.currentTimeMillis()-startTime));
